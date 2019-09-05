@@ -9,6 +9,17 @@ class QueryBuilder
      */
     protected $pdo;
 
+    protected $table;
+
+    protected $select = [];
+
+    protected $wheres = [];
+
+    protected $whereContent;
+
+    protected $wheresValues = [];
+
+
     /**
      * Inicializa con el objeto PDO
      * 
@@ -19,140 +30,92 @@ class QueryBuilder
         $this->pdo = $pdo;
     }
 
-    /**
-     * Selecciona todo los datos de la tabla pasada como parametro
-     * en la base de dato hace una consulta (SELECT * FROM $table)
-     * 
-     * @param string $table la tabla a consultar
-     */
-    public function selectAll($table)
+    /////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////
+
+    public function table($table)
     {
-        $statement = $this->pdo->prepare("select * from {$table}");
-
-        $statement->execute();
-
-        return $statement->fetchAll(PDO::FETCH_CLASS);
+        $this->table = $table;
+        return $this;
     }
 
-    /**
-     * Seleccionar registros por columnas segun los parametros y
-     * tabla
-     * 
-     * @
-     * @param string $table La tabla de la base de datos
-     * @param array $parameters
-     * 
-     */
+    public function select(array $select)
+    {
+        $this->select = $select;
+        return $this;
+    }
 
-    public function selectUnique($table,$parameters)
-    { 
-        $sql = sprintf(
-            "select %s from %s",
-            implode(", ", $parameters),
+    public function all()
+    {
+
+        $table = $this->table;
+
+        $query = sprintf(
+            "select * from %s",
             $table
         );
 
-        $statement = $this->pdo->prepare($sql);
+        $statement = $this->pdo->prepare($query);
 
         $statement->execute();
 
-        return $statement->fetchAll(PDO::FETCH_CLASS);
+        return $statement->fetchAll(\PDO::FETCH_CLASS);
 
     }
 
-    /**
-     * Seleccionar con la condicional where
-     * Ejm : select * from table where id = 1
-     * 
-     * @param string $table
-     * @param array $columns
-     * @param array $wheres
-     */
-    public function selectAlllWhere($table,$columns,$wheres)
-    {   
-        $where = "";
+    public function where($column, $operador, $valor)
+    {
+        array_push($this->wheres, [$column, $operador, $valor]);
+        return $this;
+    }
 
-        $col = false;
+    protected function whereStable()
+    {
+        $initWhere = false;
 
-        foreach ($wheres as $key => $value) {
-            
-            if ($col == false) {
-                $where .= $key . "= :" . $key;
+        $wheres = $this->wheres;
+
+        for ($i=0; $i < count($wheres); $i++) {
+            if($initWhere == false){
+                $this->whereContent .= " where {$wheres[$i][0]} {$wheres[$i][1]} :where$i";
             }
             else{
-                $where .= " and " . $key . "= :" . $key;
+                $this->whereContent .= " and {$wheres[$i][0]} {$wheres[$i][1]} :where$i";
             }
-            $col = true;
+            $initWhere = true;
+
+            $this->wheresValues["where$i"] = "{$wheres[$i][2]}";
         }
-        $sql = sprintf(
-            "select %s from %s where %s",
-            $columns == null ? "*" : implode(", ", $columns),
+    }
+
+    public function get()
+    {
+        $table = $this->table;
+
+        $select = implode(', ', $this->select);
+
+        $initWhere = false;
+
+        $this->whereStable();
+
+        $query = sprintf(
+            "select %s from %s %s",
+            $select,
             $table,
-            $where
+            $this->whereContent
         );
 
+        // die($query);
 
-        $statement = $this->pdo->prepare($sql);
+        $statement = $this->pdo->prepare($query);
 
-        $statement->execute($wheres);
+        $statement->execute($this->wheresValues);
 
-        return $statement->fetchAll(PDO::FETCH_CLASS);
-
+        return $statement->fetchAll(\PDO::FETCH_CLASS);
     }
 
-    /**
-     * Cuenta todas las filas deacuerpo al $id 
-     * @param string $table
-     * @param string $id
-     */
-    public function countSimple($table, $id = "id")
-    {
-        $statement = $this->pdo->prepare("select count({$id}) as countSimple from {$table}");
-
-        $statement->execute();
-
-        return $statement->fetch();
-    }
-
-
-    /**
-     * Busca en la base de datos segun los parametros asignados
-     * @param string $table
-     * @param array $columns
-     * @param array $wheres
-     * @return array
-     */
-    public function search( $table, $columns, $wheres)
-    {
-        $where = "";
-
-        $col = false;
-
-        foreach ($wheres as $key => $value) {
-
-            if ($col == false) {
-                $where .= $key . " like :" . $key;
-            } else {
-                $where .= " || " . $key . " like :" . $key;
-            }
-            $col = true;
-        }
-        $sql = sprintf(
-            "select %s from %s where (%s)",
-            $columns == null ? "*" : implode(", ", $columns),
-            $table,
-            $where
-        );
-
-
-        $statement = $this->pdo->prepare($sql);
-
-        $statement->execute($wheres);
-
-        return $statement->fetchAll(PDO::FETCH_CLASS);
-    }
-
-
+    /////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////
 
 
     /*
@@ -296,50 +259,5 @@ class QueryBuilder
 
 
      }
-
-
-     /*
-    |----------------------------------------------
-    | PERSONALIZE
-    |----------------------------------------------
-    */
-
-    public function pagination($table, $parameters, $base, $top){
-        $sql = sprintf(
-            "select %s from %s  order by id desc limit %s, %s",
-            implode(", ", $parameters),
-            $table,
-            $base,
-            $top
-        );
-
-
-        $statement = $this->pdo->prepare($sql);
-
-        $statement->execute();
-
-        return $statement->fetchAll(PDO::FETCH_CLASS);
-    }
-
-    public function list_temp_actual($table, $parameters)
-    {
-        $date = date('Y-m-d');
-        $date_ini = $date . " 00:00:00";
-        $date_fin = $date . " 23:59:59";
-
-        $sql = sprintf(
-            "select %s from %s WHERE create_modify BETWEEN '" . $date_ini . "' AND '" . $date_fin . "' order by create_modify desc",
-            implode(", ", $parameters),
-            $table
-        );
-
-
-        $statement = $this->pdo->prepare($sql);
-
-        $statement->execute();
-
-        return $statement->fetchAll(PDO::FETCH_CLASS);
-
-    }
 
 }

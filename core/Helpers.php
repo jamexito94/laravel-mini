@@ -103,9 +103,9 @@ if(!function_exists('assets')){
     function assets($uri)
     {   
 
-        $protocolo = App::get("config")["host"]["protocolo"];
+        $protocolo = App::get("config_app")["protocolo"];
 
-        $host = App::get("config")["host"]["dominio"];
+        $host = App::get("config_app")["dominio"];
 
         echo $protocolo . $host . "/public/" . $uri;
 
@@ -123,30 +123,14 @@ if(!function_exists('asset')){
     function asset()
     {
     
-        $protocolo = App::get("config")["host"]["protocolo"];
+        $protocolo = App::get("config_app")["protocolo"];
     
-        $host = App::get("config")["host"]["dominio"];
+        $host = App::get("config_app")["dominio"];
     
         return $protocolo . $host . "/public/";
     }
 }
 
-
-if(!function_exists('title')){
-    /**
-     *  Obtiene el titulo de tu pagina web
-     * 
-     */
-
-    function title()
-    {
-
-        $title = App::get("config")["mySite"]["name"];
-
-        return $title;
-
-    }
-}
 
 
 

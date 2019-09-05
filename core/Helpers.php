@@ -1,5 +1,15 @@
 <?php
 
+use Core\Aplication\App;
+
+if(!function_exists('database')){
+
+    function database(){
+        return App::get('database');
+    }
+
+}
+
 if(!function_exists('view')){
     /**
      * Funcion que retorna la vista de app/views

@@ -13,7 +13,7 @@ use App\Core\Aplication\App;
  | Añadimos a App la configuracion como parametro config y sus
  | recursos en el archivo config.php
  */
-App::bind('config', require '../config/config.php');
+App::bind('config', require dirname(__DIR__) . '/config/config.php');
 
 
 

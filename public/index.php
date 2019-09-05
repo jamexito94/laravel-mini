@@ -1,7 +1,7 @@
 <?php
 
-use App\Core\Request\Request;
-use App\Core\Router\Router;
+use Core\Request\Request;
+use Core\Router\Router;
 
 date_default_timezone_set("America/Lima");
 session_start();

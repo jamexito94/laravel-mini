@@ -8,14 +8,14 @@ class ComposerStaticInitdb5c7bdcb427661fd2899e0ac4eb7381
 {
     public static $classMap = array (
         'App\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/controllers/HomeController.php',
-        'App\\Core\\Aplication\\App' => __DIR__ . '/../..' . '/core/Aplication/App.php',
-        'App\\Core\\Request\\Request' => __DIR__ . '/../..' . '/core/Request/Request.php',
-        'App\\Core\\Router\\Router' => __DIR__ . '/../..' . '/core/Router/Router.php',
         'ComposerAutoloaderInitdb5c7bdcb427661fd2899e0ac4eb7381' => __DIR__ . '/..' . '/composer/autoload_real.php',
         'Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
         'Composer\\Autoload\\ComposerStaticInitdb5c7bdcb427661fd2899e0ac4eb7381' => __DIR__ . '/..' . '/composer/autoload_static.php',
-        'Connection' => __DIR__ . '/../..' . '/core/database/Connection.php',
-        'QueryBuilder' => __DIR__ . '/../..' . '/core/database/QueryBuilder.php',
+        'Core\\Aplication\\App' => __DIR__ . '/../..' . '/core/Aplication/App.php',
+        'Core\\Database\\Connection' => __DIR__ . '/../..' . '/core/database/Connection.php',
+        'Core\\Database\\QueryBuilder' => __DIR__ . '/../..' . '/core/database/QueryBuilder.php',
+        'Core\\Request\\Request' => __DIR__ . '/../..' . '/core/Request/Request.php',
+        'Core\\Router\\Router' => __DIR__ . '/../..' . '/core/Router/Router.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

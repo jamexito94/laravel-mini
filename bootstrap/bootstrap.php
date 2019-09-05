@@ -1,6 +1,8 @@
 <?php
 
-use App\Core\Aplication\App;
+use Core\Aplication\App;
+use Core\Database\Connection;
+use Core\Database\QueryBuilder;
 
 /*
  |-----------------------------------------------------------

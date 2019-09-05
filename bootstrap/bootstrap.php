@@ -1,8 +1,6 @@
 <?php
 
 use App\Core\Aplication\App;
-// use App\Controllers\AuthController;
-// use App\Controllers\ProfileController;
 
 /*
  |-----------------------------------------------------------

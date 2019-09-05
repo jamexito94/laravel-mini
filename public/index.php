@@ -25,10 +25,7 @@ require '../vendor/autoload.php';
  |-----------------------------------------------------
  | Obtener Bootstrap (Principal)
  |-----------------------------------------------------
- | No confundir con el framework bootstrap.css (un 
- | framework para css). Botstrap es el centro de la App
- | dentro de ello se encuentra la configuracion y
- | funciones del sistema y personalizadas
+ | Son los requerimientos del sitema
  |
  */
 require '../bootstrap/bootstrap.php';
